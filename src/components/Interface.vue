@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Icon from "./Icon.vue";
 import { ref, onMounted, onUnmounted, watch } from "vue";
+import Button from "./Button.vue"
 
 const money = ref<number>(parseInt(localStorage.getItem("money") || "0"));
 const energy = ref(200);
@@ -63,10 +64,8 @@ watch(energy, (newCount) => {
         </div>
       </div>
       <div class="buttonholder">
-        <button v-if="!isDead" @click="increment" class="button">
-          <img src="../assets//images/people.png" alt="" class="button__img" />
-        </button>
-        <h1 v-else class="dead">Жди сын шалавы, коплю стары</h1>
+        <Button v-if="!isDead" @click="increment"><Icon icon="people" /> </Button>
+        <h1 v-else class="dead">I haven't fame</h1>
       </div>
       <div class="footerholder">
         <footer class="footer">
@@ -85,12 +84,12 @@ watch(energy, (newCount) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url("../assets/images//background.png")
+  background-image: url("../assets/images//background.png");
+  min-height: 100dvh;
 }
 
 .app {
   max-width: 480px;
-  height: 100dvh;
   background-image: url("../assets/images/background.png");
   background-size: auto 100%;
   display: flex;
@@ -129,16 +128,7 @@ watch(energy, (newCount) => {
 .buttonholder {
   display: flex;
   justify-content: center;
-  padding-top: 150px;
-}
-
-.button {
-  margin: 0;
-  padding: 0;
-  border: none;
-  display: flex;
-  background-color: transparent;
-  cursor: pointer;
+  padding-top: 200px;
 }
 
 .dead {
@@ -149,7 +139,7 @@ watch(energy, (newCount) => {
 }
 
 .footerholder {
-  margin-top: 50px;
+  margin-top: 20px;
 }
 
 .footer {
