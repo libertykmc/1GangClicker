@@ -1,18 +1,49 @@
 <script setup lang="ts">
 import Icon from "./Icon.vue";
-import { ref } from "vue";
-const count = ref(0);
+import { ref, onMounted, onUnmounted, watch } from "vue";
+
+const money = ref<number>(parseInt(localStorage.getItem("money") || "0"));
 const energy = ref(200);
 const isDead = ref(false);
+let energyTimer: number | null = null;
 
 const increment = () => {
-  count.value++;
-  energy.value -= 50;
+  money.value++;
+  energy.value -= 20;
   if (energy.value <= 0) {
     isDead.value = true;
+    energy.value = 0;
   }
-  if (energy.value> 0) isDead.value = false;
+  else isDead.value = false;
 };
+
+const restoreEnergy = () => {
+  if (energy.value < 200) {
+    energy.value +=10;
+    if (energy.value > 200) {
+      energy.value = 200;
+    }
+  }
+};
+
+
+onMounted(() => {
+  energyTimer = setInterval(restoreEnergy, 2000);
+});
+
+onUnmounted(() => {
+  if (energyTimer != null) {
+    clearInterval(energyTimer);
+  }
+});
+
+watch(money, (newCount) => {
+  localStorage.setItem("money", newCount.toString());
+});
+
+watch(energy, (newCount) => {
+  if (newCount > 0) isDead.value = false;
+})
 </script>
 
 <template>
@@ -24,7 +55,7 @@ const increment = () => {
         </div>
         <div class="stat">
             <img class="stat__image" src="/Money.png" />
-            <p class="stat__text">{{ count }}</p>
+            <p class="stat__text">{{ money }}</p>
         </div>
         <div class="stat">
             <img class="stat__image" src="/Star.png" />
@@ -35,7 +66,7 @@ const increment = () => {
         <button v-if="!isDead" @click="increment" class="button">
           <img src="../assets//images/people.png" alt="" class="button__img" />
         </button>
-        <h1 v-if="isDead" class="dead">Жди сын шалавы, коплю стары</h1>
+        <h1 v-else class="dead">Жди сын шалавы, коплю стары</h1>
       </div>
       <div class="footerholder">
         <footer class="footer">
@@ -54,11 +85,12 @@ const increment = () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-image: url("../assets/images//background.png")
 }
 
 .app {
-  width: 360px;
-  height: 640px;
+  max-width: 480px;
+  height: 100dvh;
   background-image: url("../assets/images/background.png");
   background-size: auto 100%;
   display: flex;
@@ -70,6 +102,7 @@ const increment = () => {
   display: flex;
   justify-content: space-around;
   margin-top: 10px;
+  gap: 20px;
 }
 
 .stat {
@@ -116,7 +149,7 @@ const increment = () => {
 }
 
 .footerholder {
-  margin-top: auto;
+  margin-top: 50px;
 }
 
 .footer {
