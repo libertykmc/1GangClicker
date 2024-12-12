@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import Button from "./Button.vue"
 import Icon from "./Icon.vue";
+import Stat from "./Stat.vue"
 
 const money = ref<number>(+(localStorage.getItem("money") || "0"));
 const energy = ref<number>(+(localStorage.getItem("energy") || "200"));
@@ -51,17 +52,11 @@ watch(energy, (newCount) => {
   <div class="container">
     <div class="app">
       <div class="high__stats">
-        <div class="stat">
-             <Icon class=stat__image icon="home" />
-        </div>
-        <div class="stat">
-          <Icon class=stat__image icon="money" />
-            <p class="stat__text">{{ money }}</p>
-        </div>
-        <div class="stat">
-          <Icon class=stat__image icon="star" />
-            <p class="stat__text">{{ energy }}</p>
-        </div>
+        <Stat><Icon icon="home" class=stat__image /></Stat>
+        <Stat><Icon icon="money" class=stat__image />
+        <p class="stat__text">{{ money }}</p></Stat>
+        <Stat><Icon icon="star" class=stat__image />
+        <p class="stat__text">{{ energy }}</p></Stat>
       </div>
       <div class="buttonholder">
         <Button v-if="!isDead" @click="increment"><Icon icon="people" /> </Button>
@@ -108,15 +103,6 @@ watch(energy, (newCount) => {
   justify-content: space-around;
   margin-top: 10px;
   gap: 10px;
-}
-
-.stat {
-  background-color: rgba(217, 217, 217, 1);
-  border-radius: 48px;
- display: flex;
- align-items: center;
- justify-content: center;
-
 }
 
 .stat__image {
