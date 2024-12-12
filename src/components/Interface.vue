@@ -77,7 +77,6 @@ watch(energy, (newCount) => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .container {
   display: flex;
@@ -85,13 +84,19 @@ watch(energy, (newCount) => {
   justify-content: center;
   align-items: center;
   background-image: url("../assets/images//background.png");
-  min-height: 100dvh;
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .app {
-  max-width: 480px;
+  flex: 1;
+  width: 100%;
+  height: 100%;
   background-image: url("../assets/images/background.png");
-  background-size: auto 100%;
+  background-size: cover;
+  background-position: center;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -101,45 +106,47 @@ watch(energy, (newCount) => {
   display: flex;
   justify-content: space-around;
   margin-top: 10px;
-  gap: 20px;
+  gap: 10px;
 }
 
 .stat {
-    background-color: rgba(217, 217, 217, 1);
+  background-color: rgba(217, 217, 217, 1);
   border-radius: 48px;
-  display: flex;
-  gap: 3px;
-  align-items: center;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+
 }
 
 .stat__image {
-    width: 50px;
-  padding: 7px;
+  width: 50px;
+  padding: 10px;
 }
 
 .stat__text {
-    font-family: "Inter", sans-serif;
-  font-size: 24px;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
   font-weight: 400;
   color: black;
-  padding: 5px;
+  padding: 10px;
 }
 
 .buttonholder {
   display: flex;
   justify-content: center;
-  padding-top: 200px;
+  flex: 1;
+  margin-top: 200px;
 }
 
 .dead {
-  font-size: 24px;
+  font-size: 18px;
   color: #fff;
-  display: flex;
-  justify-content: center;
+  text-align: center;
 }
 
 .footerholder {
-  margin-top: 20px;
+  margin-top: auto;
+  width: 100%;
 }
 
 .footer {
@@ -149,4 +156,35 @@ watch(energy, (newCount) => {
   border-radius: 48px;
   padding: 10px;
 }
+
+/*@media (max-width: 768px) {
+ .stat {
+    max-width: 100px;
+    padding: 5px;
+  }
+
+  .stat__image {
+    width: 20%;
+    max-width: 30px;
+  } 
+
+  .stat__text {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat {
+    max-width: 80px;
+  }
+
+  .stat__image {
+    width: 25%;
+    max-width: 25px;
+  }
+
+  .stat__text {
+    font-size: 14px;
+  } 
+} */
 </style>
