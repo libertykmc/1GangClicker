@@ -28,7 +28,7 @@ const restoreEnergy = () => {
 
 
 onMounted(() => {
-  energyTimer = setInterval(restoreEnergy, 2000);
+  energyTimer = setInterval(restoreEnergy, 1000);
 });
 
 onUnmounted(() => {
@@ -52,14 +52,14 @@ watch(energy, (newCount) => {
     <div class="app">
       <div class="high__stats">
         <div class="stat">
-            <img class="stat__image" src="/Home.png" />
+             <Icon class=stat__image icon="home" />
         </div>
         <div class="stat">
-            <img class="stat__image" src="/Money.png" />
+          <Icon class=stat__image icon="money" />
             <p class="stat__text">{{ money }}</p>
         </div>
         <div class="stat">
-            <img class="stat__image" src="/Star.png" />
+          <Icon class=stat__image icon="star" />
             <p class="stat__text">{{ energy }}</p>
         </div>
       </div>
@@ -69,9 +69,9 @@ watch(energy, (newCount) => {
       </div>
       <div class="footerholder">
         <footer class="footer">
-          <Icon icon="shirt" />
-          <Icon icon="micro" />
-          <Icon icon="disk" />
+          <Icon class="stat__image" icon="shirt" />
+          <Icon class="stat__image" icon="micro" />
+          <Icon class="stat__image" icon="disk" />
         </footer>
       </div>
     </div>
@@ -84,16 +84,17 @@ watch(energy, (newCount) => {
   justify-content: center;
   align-items: center;
   background-image: url("../assets/images//background.png");
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   padding: 0;
   margin: 0;
+  overflow: hidden;
 }
 
 .app {
   flex: 1;
   width: 100%;
-  height: 100%;
+  height: 100dhv;
   background-image: url("../assets/images/background.png");
   background-size: cover;
   background-position: center;
@@ -146,7 +147,7 @@ watch(energy, (newCount) => {
 
 .footerholder {
   margin-top: auto;
-  width: 100%;
+  padding: 40px;
 }
 
 .footer {
