@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type Icon = "home" | "money" | "star" | "shirt" | "micro" | "disk" | "people";
+ export type Icon = "home" | "money" | "star" | "shirt" | "micro" | "disk" | "people";
 
 defineProps<{
   icon: Icon;

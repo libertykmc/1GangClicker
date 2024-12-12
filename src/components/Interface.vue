@@ -52,12 +52,10 @@ watch(energy, (newCount) => {
   <div class="container">
     <div class="app">
       <div class="high__stats">
-        <Stat><Icon icon="home" class=stat__image /></Stat>
-        <Stat><Icon icon="money" class=stat__image />
-        <p class="stat__text">{{ money }}</p></Stat>
-        <Stat><Icon icon="star" class=stat__image />
-        <p class="stat__text">{{ energy }}</p></Stat>
-      </div>
+        <Stat icon="home" />
+        <Stat icon="money" :text="money.toString()" />
+        <Stat icon="star" :text="energy.toString()" />
+      </div> 
       <div class="buttonholder">
         <Button v-if="!isDead" @click="increment"><Icon icon="people" /> </Button>
         <h1 v-else class="dead">Коплю ману бро</h1>
