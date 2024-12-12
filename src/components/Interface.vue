@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Icon from "./Icon.vue";
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import Button from "./Button.vue"
+import Icon from "./Icon.vue";
 
-const money = ref<number>(parseInt(localStorage.getItem("money") || "0"));
-const energy = ref(200);
+const money = ref<number>(+(localStorage.getItem("money") || "0"));
+const energy = ref<number>(+(localStorage.getItem("energy") || "200"));
 const isDead = ref(false);
 let energyTimer: number | null = null;
 
@@ -15,7 +15,6 @@ const increment = () => {
     isDead.value = true;
     energy.value = 0;
   }
-  else isDead.value = false;
 };
 
 const restoreEnergy = () => {
@@ -44,6 +43,7 @@ watch(money, (newCount) => {
 
 watch(energy, (newCount) => {
   if (newCount > 0) isDead.value = false;
+  localStorage.setItem("energy", newCount.toString());
 })
 </script>
 
@@ -65,7 +65,7 @@ watch(energy, (newCount) => {
       </div>
       <div class="buttonholder">
         <Button v-if="!isDead" @click="increment"><Icon icon="people" /> </Button>
-        <h1 v-else class="dead">I haven't fame</h1>
+        <h1 v-else class="dead">Коплю ману бро</h1>
       </div>
       <div class="footerholder">
         <footer class="footer">
