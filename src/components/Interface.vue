@@ -120,8 +120,9 @@ watch(energy, (newCount) => {
 }
 
 .stat__image {
-  width: 50px;
+  width: 30px;
   padding: 10px;
+  height: 30px;
 }
 
 .stat__text {
@@ -147,7 +148,7 @@ watch(energy, (newCount) => {
 
 .footerholder {
   margin-top: auto;
-  padding: 40px;
+  padding: 20px;
 }
 
 .footer {
