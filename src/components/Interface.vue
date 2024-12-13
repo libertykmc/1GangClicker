@@ -142,35 +142,4 @@ watch(energy, (newCount) => {
   border-radius: 48px;
   padding: 10px;
 }
-
-/*@media (max-width: 768px) {
- .stat {
-    max-width: 100px;
-    padding: 5px;
-  }
-
-  .stat__image {
-    width: 20%;
-    max-width: 30px;
-  } 
-
-  .stat__text {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .stat {
-    max-width: 80px;
-  }
-
-  .stat__image {
-    width: 25%;
-    max-width: 25px;
-  }
-
-  .stat__text {
-    font-size: 14px;
-  } 
-} */
 </style>
