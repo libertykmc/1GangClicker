@@ -1,5 +1,11 @@
 <script setup lang="ts">
-
+import {useRouter} from "vue-router";
+import Button from "./Button.vue"
+import Icon from "./Icon.vue";
+const router= useRouter();
+const goToGame= () => {
+  router.push("/main");
+}
 </script>
 
 <template>
@@ -7,9 +13,9 @@
     <div class="app">
       <div class="sign">
       <h1>Добро пожаловать <br /> нажмите, чтобы войти</h1>
-      <RouterLink class="link" to="/main"><img src="/sign.svg" alt="" class="sign__img"></RouterLink>
+      <Button @click="goToGame"><Icon icon="sign" class="sign__img"/></Button>
     </div>
-    <RouterView />
+    
     </div>
   </div>
 </template>
