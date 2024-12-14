@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useRouter} from "vue-router";
 import Button from "./Button.vue"
-import Icon from "./Icon.vue";
+
 const router= useRouter();
 const goToGame= () => {
   router.push("/main");
@@ -12,10 +12,10 @@ const goToGame= () => {
   <div class="container">
     <div class="app">
       <div class="sign">
-      <h1>Добро пожаловать <br /> нажмите, чтобы войти</h1>
-      <Button @click="goToGame"><Icon icon="sign" class="sign__img"/></Button>
+        <h1>1Gang</h1>
+      <h1>Добро пожаловать</h1>
+      <Button @click="goToGame"><span class="button__text">Нажмите, чтобы войти</span></Button>
     </div>
-    
     </div>
   </div>
 </template>
@@ -42,6 +42,8 @@ const goToGame= () => {
   background-position: center;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
@@ -51,9 +53,14 @@ const goToGame= () => {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  text-align: center;
+  color: #fff;
 }
 
-.sign__img {
-  width: 50px;
+.button__text{ 
+  font-size: 24px;
+  color: #fff;
+  font-family: "Inter", sans-serif;
 }
+
 </style>
