@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Interface from "./components/Interface.vue";
+import Interface from "./components/Sign.vue";
 </script>
 
 <template>
