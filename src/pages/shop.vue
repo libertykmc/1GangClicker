@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Header from "../components/Header.vue"
+import Card from "../components/ShopCard.vue"
 </script>
+
 
 
 <template>
@@ -10,6 +12,10 @@ import Header from "../components/Header.vue"
     <Header />
     <h1 class="shop__title">Магазин</h1>
     <div class="shop__items">
+        <Card icon="micro" name="Микрофон" price=100 />
+        <Card icon="vika" name="Вика" price="1000000" />
+        <Card icon="ishak" name="Ишак" price="0" />
+
         <!--Todo: item components-->
     </div>
     </div>
@@ -57,5 +63,11 @@ import Header from "../components/Header.vue"
     font-size: 24px;
     font-weight: 500;
     color: #fff;
+}
+
+.shop__items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 </style>

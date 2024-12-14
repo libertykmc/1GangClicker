@@ -1,5 +1,5 @@
 <script setup lang="ts">
- export type Icon = "home" | "money" | "star" | "shirt" | "micro" | "disk" | "people" | "sign";
+ export type Icon = "home" | "money" | "star" | "shirt" | "micro" | "disk" | "people" | "sign" | "vika" | "ishak";
 
 defineProps<{
   icon: Icon;
@@ -13,7 +13,9 @@ const iconPaths: Record<Icon, string> = {
   micro: "./Micro.png",
   disk: "./Disk.png",
   people: "./people.png",
-  sign: "./sign.svg"
+  sign: "./sign.svg",
+  vika: "./Vika.jpg",
+  ishak: "./ishak.jpg"
 };
 </script>
 
