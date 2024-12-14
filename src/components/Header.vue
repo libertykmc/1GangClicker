@@ -6,10 +6,10 @@ import { money, energy, isDead} from "../main.ts";
 let energyTimer: number | null = null;
 
 const restoreEnergy = () => {
-  if (energy.value < 200) {
+  if (energy.value < 1000) {
     energy.value +=10;
-    if (energy.value > 200) {
-      energy.value = 200;
+    if (energy.value > 1000) {
+      energy.value = 1000;
     }
   }
 };
