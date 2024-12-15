@@ -15,5 +15,10 @@
   display: flex;
   background-color: transparent;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+  transform: translateY(-2px);
 }
 </style>

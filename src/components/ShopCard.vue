@@ -52,10 +52,15 @@ watch( () => props.price, (newCount) => {
   display: flex;
   align-items: center;
   gap: 10px;
+  background-color: rgb(71, 69, 69);
+  border-radius: 30px;
+  padding: 10px;
 }
 
 .card__image {
   width: 30px;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .card__text {
@@ -71,13 +76,14 @@ watch( () => props.price, (newCount) => {
 }
 
 .greenButton {
-  background-color: greenyellow;
+  background-color: rgb(106, 169, 12);
   border-radius: 10px;
   border: none;
   padding: 5px;
-  color: gray;
+  color: #fff;
   font-size: 14px;
   cursor: pointer;
+  margin-left: auto;
 }
 
 .grayButton {
@@ -88,5 +94,6 @@ watch( () => props.price, (newCount) => {
   color: #fff;
   font-size: 14px;
   cursor: pointer;
+  margin-left: auto;
 }
 </style>
