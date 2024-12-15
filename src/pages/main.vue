@@ -60,12 +60,14 @@ watch(money, (newCount) => {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
+
+
 .buttonholder {
-  display: flex;
-  justify-content: center;
-  flex: 1;
+ 
   margin-top: 200px;
 }
 

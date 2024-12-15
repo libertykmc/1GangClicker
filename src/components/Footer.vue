@@ -17,6 +17,7 @@ import Icon from "./Icon.vue";
   background: rgba(217, 217, 217, 1);
   border-radius: 48px;
   padding: 10px;
+  gap: 30px;
 }
 .footer__image {
   width: 30px;
