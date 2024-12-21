@@ -64,8 +64,6 @@ watch(money, (newCount) => {
   justify-content: center;
 }
 
-
-
 .buttonholder {
  
   margin-top: 200px;

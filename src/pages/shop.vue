@@ -3,8 +3,6 @@ import Header from "../components/Header.vue"
 import Card from "../components/ShopCard.vue"
 </script>
 
-
-
 <template>
     <div class="container">
         <div class="app">
@@ -15,14 +13,11 @@ import Card from "../components/ShopCard.vue"
         <Card icon="micro" name="Микрофон" price=100 />
         <Card icon="vika" name="Вика" price="1000000" />
         <Card icon="ishak" name="Ишак" price="0" />
-
-        <!--Todo: item components-->
     </div>
     </div>
     </div>
     </div>
 </template>
-
 
 <style scoped>
 .container {
