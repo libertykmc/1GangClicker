@@ -15,12 +15,14 @@ const restoreEnergy = () => {
 };
 
 const formatNumber = (num: number): string => {
-  if (num >= 1_000_000) {
-    return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
-  } else if (num >= 1_000) {
-    return (num / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
-  }
-  return num.toString();
+  if (num < 1000) return num.toString();
+
+  const suffixes = ["", "K", "M", "B", "T", "P", "E"];
+  const tier = Math.floor(Math.log10(num) / 3);
+  const scaled = num / Math.pow(10, tier * 3);
+  const suffix = suffixes[tier] || `e${tier * 3}`;
+
+  return scaled.toFixed(1).replace(/\.0$/, "") + suffix;
 };
 
 onMounted(() => {
@@ -47,7 +49,7 @@ watch(energy, (newCount) => {
   <div class="high__stats">
     <RouterLink to="/main"><Stat icon="home" /></RouterLink>
     <Stat icon="money" :text="formatNumber(money.valueOf())" />
-    <Stat icon="star" :text="energy.toString()" />
+    <Stat icon="star" :text="formatNumber(energy.valueOf())" />
   </div>
 </template>
 
