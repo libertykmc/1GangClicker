@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import Header from "../components/Header.vue"
-import Card from "../components/ShopCard.vue"
+import Header from "../components/Header.vue";
+import Card from "../components/ShopCard.vue";
 </script>
 
 <template>
-    <div class="container">
-        <div class="app">
-    <div class="shop">
-    <Header />
-    <h1 class="shop__title">Магазин</h1>
-    <div class="shop__items">
-        <Card icon="micro" name="Микрофон" price=100 />
-        <Card icon="vika" name="Вика" price="1000000" />
-        <Card icon="ishak" name="Ишак" price="0" />
+  <div class="container">
+    <div class="app">
+      <div class="shop">
+        <Header />
+        <h1 class="shop__title">Магазин</h1>
+        <div class="shop__items">
+          <Card icon="micro" name="Микрофон" price="100" />
+          <Card icon="micro" name="Микрофон" price="100" />
+          <Card icon="micro" name="Микрофон" price="100" />
+        </div>
+      </div>
     </div>
-    </div>
-    </div>
-    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -46,23 +46,23 @@ import Card from "../components/ShopCard.vue"
 }
 
 .shop {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
 .shop__title {
-    font-family: "Inter", sans-serif;
-    font-size: 24px;
-    font-weight: 500;
-    color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #fff;
 }
 
 .shop__items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 </style>

@@ -3,11 +3,15 @@ import Icon from "./Icon.vue";
 </script>
 
 <template>
-<footer class="footer">
-    <RouterLink to="/shop"><Icon class="footer__image" icon="shirt" /></RouterLink>
-     <Icon class="footer__image" icon="micro" />
-     <Icon class="footer__image" icon="disk" />
-   </footer>
+  <footer class="footer">
+    <RouterLink to="/shop"
+      ><Icon class="footer__image" icon="shirt"
+    /></RouterLink>
+    <Icon class="footer__image" icon="micro" />
+    <RouterLink to="/profile"
+      ><Icon class="footer__image" icon="disk"
+    /></RouterLink>
+  </footer>
 </template>
 
 <style scoped>
