@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Header from "../components/Header.vue";
 import Card from "../components/ShopCard.vue";
+import Footer from "../components/Footer.vue";
 </script>
 
 <template>
@@ -14,6 +15,9 @@ import Card from "../components/ShopCard.vue";
           <Card icon="micro" name="Микрофон" price="100" />
           <Card icon="micro" name="Микрофон" price="100" />
         </div>
+      </div>
+      <div class="footerholder">
+        <Footer />
       </div>
     </div>
   </div>
@@ -43,6 +47,8 @@ import Card from "../components/ShopCard.vue";
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
 .shop {
@@ -64,5 +70,10 @@ import Card from "../components/ShopCard.vue";
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.footerholder {
+  margin-top: auto;
+  padding: 20px;
 }
 </style>

@@ -3,8 +3,8 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { ref } from "vue";
 
-const name = ref<string>(localStorage.getItem("profile_name") || "Ишак");
-const age = ref<number>(+(localStorage.getItem("profile_age") || 18));
+const name = ref<string>(localStorage.getItem("profile_name") || "Неизвестный");
+const age = ref<number>(+(localStorage.getItem("profile_age") || 0));
 const isEditing = ref<boolean>(false);
 
 function toggleEdit() {
