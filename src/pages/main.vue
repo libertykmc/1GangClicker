@@ -3,8 +3,8 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import Icon from "../components/Icon.vue";
 import Button from "../components/Button.vue";
-import {isDead, money, energy} from "../main.ts";
-import {watch} from "vue";
+import { isDead, money, energy, avatar } from "../main.ts";
+import { watch } from "vue";
 
 const increment = () => {
   money.value++;
@@ -20,20 +20,21 @@ watch(money, (newCount) => {
 });
 </script>
 
-
 <template>
   <div class="container">
     <div class="app">
-    <Header />
+      <Header />
       <div class="buttonholder">
-        <Button v-if="!isDead" @click="increment"><Icon icon="people" /> </Button>
+        <Button v-if="!isDead" @click="increment"
+          ><Icon :icon="avatar" />
+        </Button>
         <h1 v-else class="dead">Коплю ману бро</h1>
       </div>
       <div class="footerholder">
         <Footer />
       </div>
-      </div>
-      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -65,7 +66,6 @@ watch(money, (newCount) => {
 }
 
 .buttonholder {
- 
   margin-top: 200px;
 }
 

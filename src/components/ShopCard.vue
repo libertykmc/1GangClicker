@@ -1,51 +1,76 @@
 <script setup lang="ts">
-import Icon, {Icon as IIcon} from "./Icon.vue";
-import {money} from "../main.ts";
-import {ref, watch} from "vue";
+import Icon, { Icon as IIcon } from "./Icon.vue";
+import { money, avatar } from "../main.ts";
+import { ref, watch } from "vue";
 
 const props = defineProps<{
-    icon: IIcon,
-    name: string,
-    price: string;
+  icon: IIcon;
+  name: string;
+  price: string;
 }>();
 
 const localPrice = ref(Number(props.price));
-const haveMoney =ref(false);
+const haveMoney = ref(false);
+const isPurchased = ref(false);
 
-if (money.value >= localPrice.value) {
+// Проверяем, куплен ли товар
+if (props.name === "miron") {
+  isPurchased.value = localStorage.getItem("miron_purchased") === "true";
+}
+
+if (money.value >= localPrice.value && !isPurchased.value) {
   haveMoney.value = true;
 }
 
 const buyObject = () => {
-  if (haveMoney) {
+  if (haveMoney.value) {
     money.value -= localPrice.value;
+    localStorage.setItem("money", money.value.toString());
+
+    // Если покупаем miron, меняем аватар и отмечаем как купленный
+    if (props.name === "miron") {
+      localStorage.setItem("profile_avatar", "miron");
+      localStorage.setItem("miron_purchased", "true");
+      avatar.value = "miron";
+      isPurchased.value = true;
+      haveMoney.value = false;
+    }
   }
-}
+};
 
 watch(money, (newCount) => {
-if (newCount < localPrice.value) {
-  haveMoney.value = false;
-  newCount = +localStorage.setItem("money", newCount.toString()); 
-}
-
-watch( () => props.price, (newCount) => {
-    localPrice.value = Number(newCount);
-})
+  if (newCount < localPrice.value) {
+    haveMoney.value = false;
+  }
+  localStorage.setItem("money", newCount.toString());
 });
 
+watch(
+  () => props.price,
+  (newCount) => {
+    localPrice.value = Number(newCount);
+  }
+);
 </script>
 
-
 <template>
-    <div class="shop__card">
-        <Icon class="card__image" :icon="icon" />
-        <p class="card__text">{{ name }}</p>
-        <p class="card__price">${{ price }}</p>
-        <button @click="buyObject" v-if="haveMoney" class="greenButton">Купить</button>
-        <button v-else class="grayButton">Купить</button>
-    </div>
+  <div class="shop__card">
+    <Icon class="card__image" :icon="icon" />
+    <p class="card__text">{{ name }}</p>
+    <p class="card__price">${{ price }}</p>
+    <button
+      @click="buyObject"
+      v-if="haveMoney && !isPurchased"
+      class="greenButton"
+    >
+      Купить
+    </button>
+    <button v-else-if="isPurchased" class="purchasedButton" disabled>
+      Приобретено
+    </button>
+    <button v-else class="grayButton">Купить</button>
+  </div>
 </template>
-
 
 <style scoped>
 .shop__card {
@@ -95,5 +120,17 @@ watch( () => props.price, (newCount) => {
   font-size: 14px;
   cursor: pointer;
   margin-left: auto;
+}
+
+.purchasedButton {
+  background-color: #4a5568;
+  border-radius: 10px;
+  border: none;
+  padding: 5px;
+  color: #a0aec0;
+  font-size: 14px;
+  cursor: not-allowed;
+  margin-left: auto;
+  opacity: 0.7;
 }
 </style>

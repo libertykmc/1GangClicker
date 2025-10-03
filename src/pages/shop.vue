@@ -14,6 +14,7 @@ import Footer from "../components/Footer.vue";
           <Card icon="micro" name="Микрофон" price="100" />
           <Card icon="micro" name="Микрофон" price="100" />
           <Card icon="micro" name="Микрофон" price="100" />
+          <Card icon="miron" name="miron" price="10" />
         </div>
       </div>
       <div class="footerholder">
