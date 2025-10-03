@@ -7,6 +7,7 @@ import shop from "./pages/shop.vue";
 import main from "./pages/main.vue";
 import sign from "./components/Sign.vue";
 import profile from "./pages/profile.vue";
+import type { Icon } from "./components/Icon.vue";
 
 export const money = ref<number>(+(localStorage.getItem("money") || "0"));
 export const energy = ref<number>(+(localStorage.getItem("energy") || "1000"));
@@ -16,8 +17,8 @@ if (!localStorage.getItem("profile_avatar")) {
   localStorage.setItem("profile_avatar", "people");
 }
 
-export const avatar = ref<string>(
-  localStorage.getItem("profile_avatar") || "people"
+export const avatar = ref<Icon>(
+  (localStorage.getItem("profile_avatar") as Icon) || "people"
 );
 
 const router = createRouter({
