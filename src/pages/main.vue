@@ -3,7 +3,7 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import Icon from "../components/Icon.vue";
 import Button from "../components/Button.vue";
-import { isDead, money, energy, avatar } from "../main.ts";
+import { isDead, money, energy, avatar, checkAchievements } from "../main.ts";
 import { watch } from "vue";
 
 const increment = () => {
@@ -13,6 +13,7 @@ const increment = () => {
     isDead.value = true;
     energy.value = 0;
   }
+  checkAchievements();
 };
 
 watch(money, (newCount) => {

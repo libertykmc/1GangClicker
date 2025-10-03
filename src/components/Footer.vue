@@ -7,7 +7,9 @@ import Icon from "./Icon.vue";
     <RouterLink to="/shop"
       ><Icon class="footer__image" icon="shirt"
     /></RouterLink>
-    <Icon class="footer__image" icon="micro" />
+    <RouterLink to="/skins"
+      ><Icon class="footer__image" icon="micro"
+    /></RouterLink>
     <RouterLink to="/profile"
       ><Icon class="footer__image" icon="disk"
     /></RouterLink>

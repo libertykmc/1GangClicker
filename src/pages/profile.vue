@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
+import Achievement from "../components/Achievement.vue";
 import { ref } from "vue";
+import { achievements } from "../main";
 
 const name = ref<string>(localStorage.getItem("profile_name") || "Неизвестный");
 const age = ref<number>(+(localStorage.getItem("profile_age") || 0));
@@ -69,6 +71,21 @@ const avatarSrc = ref<string>(
           </button>
         </div>
       </div>
+
+      <div class="achievements">
+        <h2 class="achievements__title">Достижения</h2>
+        <div class="achievements__list">
+          <Achievement
+            v-for="achievement in achievements"
+            :key="achievement.id"
+            :title="achievement.title"
+            :description="achievement.description"
+            :is-unlocked="achievement.unlocked"
+            icon="/Money.png"
+          />
+        </div>
+      </div>
+
       <div class="footerholder">
         <Footer />
       </div>
@@ -167,6 +184,27 @@ const avatarSrc = ref<string>(
   padding: 8px 14px;
   border-radius: 12px;
   border: none;
+}
+
+.achievements {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.achievements__title {
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.achievements__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .footerholder {
