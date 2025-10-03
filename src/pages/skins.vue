@@ -3,6 +3,7 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { avatar } from "../main";
 import { ref } from "vue";
+import type { Icon } from "../components/Icon.vue";
 
 // Список доступных скинов
 const availableSkins = [
@@ -11,12 +12,12 @@ const availableSkins = [
 ];
 
 // Выбранный скин
-const selectedSkin = ref(avatar.value);
+const selectedSkin = ref<Icon>(avatar.value);
 
 // Функция выбора скина
 const selectSkin = (skinId: string) => {
-  selectedSkin.value = skinId;
-  avatar.value = skinId;
+  selectedSkin.value = skinId as Icon;
+  avatar.value = skinId as Icon;
   localStorage.setItem("profile_avatar", skinId);
 };
 </script>
