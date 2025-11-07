@@ -12,7 +12,6 @@ export class Player {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // Связь 1:1 с пользователем
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
@@ -30,8 +29,8 @@ export class Player {
   energy: number;
 
   @Column({ default: 1 })
-  clickPower: number; // сила клика
+  clickPower: number;
 
   @Column({ default: 10 })
-  energyPerClick: number; // сколько энергии уходит за клик
+  energyPerClick: number;
 }

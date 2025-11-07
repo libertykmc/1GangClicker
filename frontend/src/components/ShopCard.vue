@@ -27,7 +27,6 @@ const buyObject = () => {
     money.value -= localPrice.value;
     localStorage.setItem("money", money.value.toString());
 
-    // Если покупаем miron, меняем аватар и отмечаем как купленный
     if (props.name === "miron") {
       localStorage.setItem("profile_avatar", "miron");
       localStorage.setItem("miron_purchased", "true");

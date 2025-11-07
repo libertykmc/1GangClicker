@@ -17,10 +17,10 @@ export class User {
   password: string;
 
   @Column()
-  fullName: string; // ФИО
+  fullName: string;
 
   @Column()
-  birthDate: string; // дата рождения в формате дд.мм.гггг
+  birthDate: string;
 
   @Column({ default: 0 })
   money: number;
@@ -28,6 +28,9 @@ export class User {
   @Column({ default: 100 })
   energy: number;
 
+  @Column({ type: 'text', nullable: true })
+  avatar?: string;
+
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date; // дата создания аккаунта
+  createdAt: Date;
 }

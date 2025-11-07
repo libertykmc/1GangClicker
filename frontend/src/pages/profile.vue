@@ -2,36 +2,120 @@
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import Achievement from "../components/Achievement.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { achievements } from "../main";
 
 const name = ref<string>(localStorage.getItem("profile_name") || "Неизвестный");
 const age = ref<number>(+(localStorage.getItem("profile_age") || 0));
 const isEditing = ref<boolean>(false);
+const pendingAvatar = ref<string | null>(null);
+const isSaving = ref<boolean>(false);
 
-function toggleEdit() {
-  if (isEditing.value) {
-    localStorage.setItem("profile_name", name.value);
-    localStorage.setItem("profile_age", String(age.value));
-  }
-  isEditing.value = !isEditing.value;
-}
+const API_BASE =
+  (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
 
-function onAvatarChange(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (!input.files || !input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const dataUrl = String(reader.result || "");
-    localStorage.setItem("profile_avatar", dataUrl);
-    avatarSrc.value = dataUrl;
-  };
-  reader.readAsDataURL(input.files[0]);
+function calcAgeFromBirthDate(dateStr: string): number {
+  const parts = dateStr.split(".");
+  if (parts.length !== 3) return 0;
+  const [dd, mm, yyyy] = parts.map((p) => parseInt(p, 10));
+  if (!yyyy || !mm || !dd) return 0;
+  const birth = new Date(yyyy, mm - 1, dd);
+  const now = new Date();
+  let a = now.getFullYear() - birth.getFullYear();
+  const m = now.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) a--;
+  return a;
 }
 
 const avatarSrc = ref<string>(
   localStorage.getItem("profile_avatar") || "/public/people.png"
 );
+
+onMounted(async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+  try {
+    const res = await fetch(`${API_BASE}/players/${userId}`);
+    if (!res.ok) return;
+    const player = await res.json();
+    const fullName = player?.user?.fullName as string | undefined;
+    const birthDate = player?.user?.birthDate as string | undefined;
+    const avatar = player?.user?.avatar as string | undefined;
+    if (fullName) {
+      name.value = fullName;
+      localStorage.setItem("profile_name", fullName);
+    }
+    if (birthDate) {
+      const computedAge = calcAgeFromBirthDate(birthDate);
+      age.value = computedAge;
+      localStorage.setItem("profile_age", String(computedAge));
+    }
+    if (avatar) {
+      avatarSrc.value = avatar;
+      localStorage.setItem("profile_avatar", avatar);
+    }
+  } catch {}
+});
+
+function toggleEdit() {
+  if (!isEditing.value) {
+    isEditing.value = true;
+    pendingAvatar.value = null;
+    return;
+  }
+
+  saveChanges();
+}
+
+async function saveChanges() {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    isEditing.value = false;
+    pendingAvatar.value = null;
+    return;
+  }
+  try {
+    isSaving.value = true;
+    if (pendingAvatar.value) {
+      const res = await fetch(`${API_BASE}/auth/avatar/${userId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar: pendingAvatar.value }),
+      });
+      if (res.ok) {
+        const { avatar } = await res.json();
+        avatarSrc.value = avatar || pendingAvatar.value;
+        localStorage.setItem("profile_avatar", avatarSrc.value);
+      }
+    }
+  } catch {
+  } finally {
+    isSaving.value = false;
+    isEditing.value = false;
+    pendingAvatar.value = null;
+  }
+}
+
+function onAvatarChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = String(reader.result || "");
+
+    avatarSrc.value = dataUrl;
+    pendingAvatar.value = dataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("userId");
+
+  window.location.reload();
+}
 </script>
 
 <template>
@@ -51,24 +135,23 @@ const avatarSrc = ref<string>(
         </label>
         <div class="fields">
           <div class="field">
-            <span class="label">Имя:</span>
-            <span v-if="!isEditing" class="value">{{ name }}</span>
-            <input v-else class="input" v-model="name" />
+            <span class="label">ФИО:</span>
+            <span class="value">{{ name }}</span>
           </div>
           <div class="field">
             <span class="label">Возраст:</span>
-            <span v-if="!isEditing" class="value">{{ age }}</span>
-            <input
-              v-else
-              class="input"
-              type="number"
-              min="0"
-              v-model.number="age"
-            />
+            <span class="value">{{ age }}</span>
           </div>
-          <button class="edit" @click="toggleEdit">
-            {{ isEditing ? "Сохранить" : "Редактировать" }}
+          <button class="edit" :disabled="isSaving" @click="toggleEdit">
+            {{
+              isEditing
+                ? isSaving
+                  ? "Сохраняем..."
+                  : "Сохранить"
+                : "Редактировать"
+            }}
           </button>
+          <button class="edit" @click="logout">Выйти</button>
         </div>
       </div>
 

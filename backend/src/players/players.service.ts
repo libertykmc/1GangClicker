@@ -51,10 +51,9 @@ export class PlayersService {
     return player;
   }
 
-  async updateStats(userId: string, deltaMoney: number, deltaEnergy: number) {
+  async updateStats(userId: string, deltaMoney: number, _deltaEnergy: number) {
     const player = await this.getPlayer(userId);
     player.money += deltaMoney;
-    player.energy = Math.max(0, player.energy + deltaEnergy);
     return this.playerRepo.save(player);
   }
 }

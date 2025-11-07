@@ -5,16 +5,13 @@ import { avatar } from "../main";
 import { ref } from "vue";
 import type { Icon } from "../components/Icon.vue";
 
-// Список доступных скинов
 const availableSkins = [
   { id: "people", name: "People", icon: "people" },
   { id: "miron", name: "Miron", icon: "miron" },
 ];
 
-// Выбранный скин
 const selectedSkin = ref<Icon>(avatar.value);
 
-// Функция выбора скина
 const selectSkin = (skinId: string) => {
   selectedSkin.value = skinId as Icon;
   avatar.value = skinId as Icon;

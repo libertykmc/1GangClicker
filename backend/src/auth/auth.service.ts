@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -28,7 +29,6 @@ export class AuthService {
     });
     if (existingUser) throw new BadRequestException('Username already exists');
 
-    // проверим корректность даты
     const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
     if (!dateRegex.test(birthDate)) {
       throw new BadRequestException('Date must be in format DD.MM.YYYY');
@@ -57,5 +57,16 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
 
     return { access_token: token, username: user.username };
+  }
+
+  async updateAvatar(userId: string, avatar: string) {
+    if (!avatar || avatar.length < 10) {
+      throw new BadRequestException('Invalid avatar');
+    }
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    user.avatar = avatar;
+    await this.usersRepository.save(user);
+    return { avatar: user.avatar };
   }
 }

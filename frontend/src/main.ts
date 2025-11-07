@@ -9,11 +9,13 @@ import sign from "./components/Sign.vue";
 import profile from "./pages/profile.vue";
 import skins from "./pages/skins.vue";
 import type { Icon } from "./components/Icon.vue";
+import login from "./pages/login.vue";
+import register from "./pages/register.vue";
 
 export const money = ref<number>(+(localStorage.getItem("money") || "0"));
 export const energy = ref<number>(+(localStorage.getItem("energy") || "1000"));
 export const isDead = ref(false);
-// Инициализируем аватар по умолчанию если его нет
+
 if (!localStorage.getItem("profile_avatar")) {
   localStorage.setItem("profile_avatar", "people");
 }
@@ -22,7 +24,6 @@ export const avatar = ref<Icon>(
   (localStorage.getItem("profile_avatar") as Icon) || "people"
 );
 
-// Система достижений
 export interface Achievement {
   id: string;
   title: string;
@@ -61,7 +62,6 @@ export const achievements = ref<Achievement[]>([
   },
 ]);
 
-// Функция проверки достижений
 export function checkAchievements() {
   achievements.value.forEach((achievement) => {
     if (!achievement.unlocked && money.value >= achievement.target) {
@@ -74,12 +74,28 @@ export function checkAchievements() {
 const router = createRouter({
   history: createMemoryHistory(),
   routes: [
-    { path: "/", component: sign },
+    { path: "/", redirect: "/login" },
+    { path: "/welcome", component: sign },
+    { path: "/login", component: login },
+    { path: "/register", component: register },
     { path: "/main", component: main },
     { path: "/shop", component: shop },
     { path: "/profile", component: profile },
     { path: "/skins", component: skins },
   ],
+});
+
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem("token");
+  const isAuthed = Boolean(token);
+  const publicPaths = new Set(["/login", "/register", "/welcome"]);
+  if (isAuthed && publicPaths.has(to.path)) {
+    return next("/main");
+  }
+  if (!isAuthed && !publicPaths.has(to.path)) {
+    return next("/login");
+  }
+  return next();
 });
 
 createApp(App).use(router).mount("#app");

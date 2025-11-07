@@ -4,20 +4,62 @@ import Footer from "../components/Footer.vue";
 import Icon from "../components/Icon.vue";
 import Button from "../components/Button.vue";
 import { isDead, money, energy, avatar, checkAchievements } from "../main.ts";
-import { watch } from "vue";
+import { watch, onMounted } from "vue";
 
-const increment = () => {
-  money.value++;
-  energy.value -= 20;
+const API_BASE =
+  (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+
+onMounted(async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    window.location.href = "#/login";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/players/${userId}`);
+    if (res.ok) {
+      const player = await res.json();
+      if (typeof player.money === "number") money.value = player.money;
+    }
+  } catch {}
+});
+
+const increment = async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+
+  energy.value = Math.max(0, energy.value - 10);
   if (energy.value <= 0) {
     isDead.value = true;
     energy.value = 0;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/players/update`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, deltaMoney: 1, deltaEnergy: 0 }),
+    });
+    if (res.ok) {
+      const player = await res.json();
+      money.value =
+        typeof player.money === "number" ? player.money : money.value + 1;
+    } else {
+      money.value++;
+    }
+  } catch {
+    money.value++;
   }
   checkAchievements();
 };
 
 watch(money, (newCount) => {
   localStorage.setItem("money", newCount.toString());
+});
+
+watch(energy, (newVal) => {
+  localStorage.setItem("energy", newVal.toString());
 });
 </script>
 

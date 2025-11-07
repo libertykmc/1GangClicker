@@ -11,7 +11,7 @@ import { User } from './entities/user.entity';
     TypeOrmModule.forFeature([User]),
     PassportModule,
     JwtModule.register({
-      secret: 'supersecretkey', // потом вынеси в .env
+      secret: 'supersecretkey',
       signOptions: { expiresIn: '7d' },
     }),
   ],
