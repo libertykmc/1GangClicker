@@ -30,7 +30,7 @@ export class PlayersService {
       level: 1,
       experience: 0,
       money: 0,
-      energy: 100,
+      energy: 1000,
       clickPower: 1,
     });
 

@@ -25,7 +25,7 @@ export class User {
   @Column({ default: 0 })
   money: number;
 
-  @Column({ default: 100 })
+  @Column({ default: 1000 })
   energy: number;
 
   @Column({ type: 'text', nullable: true })
