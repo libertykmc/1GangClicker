@@ -13,7 +13,6 @@ const localPrice = ref(Number(props.price));
 const haveMoney = ref(false);
 const isPurchased = ref(false);
 
-// Проверяем, куплен ли товар
 if (props.name === "miron") {
   isPurchased.value = localStorage.getItem("miron_purchased") === "true";
 }
