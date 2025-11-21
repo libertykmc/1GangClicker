@@ -33,4 +33,10 @@ export class Player {
 
   @Column({ default: 10 })
   energyPerClick: number;
+
+  @Column('simple-array', { default: '' })
+  unlockedAchievements: string[];
+
+  @Column({ default: 'people' })
+  selectedSkin: string;
 }

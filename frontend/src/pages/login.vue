@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { checkAuth } from "../authState";
 
 const router = useRouter();
 const username = ref("");
@@ -42,20 +43,31 @@ async function onSubmit() {
         username: username.value,
         password: password.value,
       }),
+      credentials: "include",
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       throw new Error(data?.message || "Ошибка входа");
     }
     const data = await res.json();
-    const token = data?.access_token as string;
-    if (!token) throw new Error("Токен не получен");
-    localStorage.setItem("token", token);
+    // Token is now in cookie.
     localStorage.setItem("username", data?.username || username.value);
-    const payload = decodeJwtPayload(token);
-    const userId = payload?.id as string;
-    if (userId) localStorage.setItem("userId", userId);
-    await ensurePlayer(userId);
+    
+    // We need to get userId. The backend login response returns { username, access_token }.
+    // I kept access_token in response but I should decode it here OR call /auth/profile to get ID.
+    // Since I want to avoid using the token from response, I should call /auth/profile.
+    // But wait, I can still use the token from response just to get the ID, but NOT store it.
+    // Or better, call /auth/profile which returns the payload.
+    
+    const profileRes = await fetch(`${API_BASE}/auth/profile`, { credentials: "include" });
+    if (profileRes.ok) {
+        const payload = await profileRes.json();
+        const userId = payload?.id as string;
+        if (userId) localStorage.setItem("userId", userId);
+        await ensurePlayer(userId);
+    }
+
+    await checkAuth(true);
     router.push("/main");
   } catch (e: any) {
     errorMessage.value = e?.message || "Не удалось выполнить вход";

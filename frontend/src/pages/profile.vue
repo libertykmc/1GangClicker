@@ -3,7 +3,11 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import Achievement from "../components/Achievement.vue";
 import { ref, onMounted } from "vue";
-import { achievements } from "../main";
+import { achievements } from "../store";
+import { useRouter } from "vue-router";
+import { checkAuth } from "../authState";
+
+const router = useRouter();
 
 const name = ref<string>(localStorage.getItem("profile_name") || "Неизвестный");
 const age = ref<number>(+(localStorage.getItem("profile_age") || 0));
@@ -81,6 +85,7 @@ async function saveChanges() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ avatar: pendingAvatar.value }),
+        credentials: "include",
       });
       if (res.ok) {
         const { avatar } = await res.json();
@@ -110,11 +115,21 @@ function onAvatarChange(event: Event) {
   reader.readAsDataURL(file);
 }
 
-function logout() {
-  localStorage.removeItem("token");
+async function logout() {
+  try {
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+  } catch {}
   localStorage.removeItem("userId");
+  localStorage.removeItem("profile_name");
+  localStorage.removeItem("profile_age");
+  localStorage.removeItem("profile_avatar");
 
-  window.location.reload();
+  await checkAuth(true);
+  router.push("/login");
 }
 </script>
 

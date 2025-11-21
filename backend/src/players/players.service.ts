@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Player } from './entities/player.entity';
 import { User } from '../auth/entities/user.entity';
+import { EventsGateway } from '../events/events.gateway';
 
 @Injectable()
 export class PlayersService {
@@ -11,7 +12,8 @@ export class PlayersService {
     private playerRepo: Repository<Player>,
     @InjectRepository(User)
     private userRepo: Repository<User>,
-  ) {}
+    private eventsGateway: EventsGateway,
+  ) { }
 
   async createForUser(userId: string) {
     console.log('🔍 Поиск пользователя с id:', userId);
@@ -54,6 +56,30 @@ export class PlayersService {
   async updateStats(userId: string, deltaMoney: number, _deltaEnergy: number) {
     const player = await this.getPlayer(userId);
     player.money += deltaMoney;
-    return this.playerRepo.save(player);
+    const saved = await this.playerRepo.save(player);
+    this.eventsGateway.notifyUserUpdate(userId, saved);
+    return saved;
+  }
+
+  async unlockAchievement(userId: string, achievementId: string) {
+    const player = await this.getPlayer(userId);
+    if (!player.unlockedAchievements) {
+      player.unlockedAchievements = [];
+    }
+    if (!player.unlockedAchievements.includes(achievementId)) {
+      player.unlockedAchievements.push(achievementId);
+      const saved = await this.playerRepo.save(player);
+      this.eventsGateway.notifyUserUpdate(userId, saved);
+      return saved;
+    }
+    return player;
+  }
+
+  async updateSkin(userId: string, skinId: string) {
+    const player = await this.getPlayer(userId);
+    player.selectedSkin = skinId;
+    const saved = await this.playerRepo.save(player);
+    this.eventsGateway.notifyUserUpdate(userId, saved);
+    return saved;
   }
 }

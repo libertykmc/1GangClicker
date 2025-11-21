@@ -16,7 +16,7 @@ export class AuthService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(
     username: string,
@@ -68,5 +68,13 @@ export class AuthService {
     user.avatar = avatar;
     await this.usersRepository.save(user);
     return { avatar: user.avatar };
+  }
+
+  verifyToken(token: string) {
+    try {
+      return this.jwtService.verify(token);
+    } catch {
+      return null;
+    }
   }
 }

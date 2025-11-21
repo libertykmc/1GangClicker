@@ -3,7 +3,7 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import Icon from "../components/Icon.vue";
 import Button from "../components/Button.vue";
-import { isDead, money, energy, avatar, checkAchievements } from "../main.ts";
+import { isDead, money, energy, currentSkin, checkAchievements } from "../store";
 import { watch, onMounted } from "vue";
 
 const API_BASE =
@@ -30,16 +30,16 @@ const increment = async () => {
   if (!userId) return;
 
   energy.value = Math.max(0, energy.value - 10);
-  if (energy.value <= 0) {
-    isDead.value = true;
-    energy.value = 0;
-  }
-
   try {
     const res = await fetch(`${API_BASE}/players/update`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, deltaMoney: 1, deltaEnergy: 0 }),
+      body: JSON.stringify({
+        userId,
+        deltaMoney: 1,
+        deltaEnergy: -10,
+      }),
+      credentials: "include",
     });
     if (res.ok) {
       const player = await res.json();
@@ -69,7 +69,7 @@ watch(energy, (newVal) => {
       <Header />
       <div class="buttonholder">
         <Button v-if="!isDead" @click="increment"
-          ><Icon :icon="avatar" />
+          ><Icon :icon="currentSkin" />
         </Button>
         <h1 v-else class="dead">Коплю ману бро</h1>
       </div>

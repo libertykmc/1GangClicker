@@ -2,74 +2,17 @@ import { createApp } from "vue";
 import "./assets/styles/index.css";
 import App from "./App.vue";
 import { createRouter, createMemoryHistory } from "vue-router";
-import { ref } from "vue";
 import shop from "./pages/shop.vue";
 import main from "./pages/main.vue";
 import sign from "./components/Sign.vue";
 import profile from "./pages/profile.vue";
 import skins from "./pages/skins.vue";
-import type { Icon } from "./components/Icon.vue";
+import type { Icon } from "./types";
 import login from "./pages/login.vue";
 import register from "./pages/register.vue";
-
-export const money = ref<number>(+(localStorage.getItem("money") || "0"));
-export const energy = ref<number>(+(localStorage.getItem("energy") || "1000"));
-export const isDead = ref(false);
-
-if (!localStorage.getItem("profile_avatar")) {
-  localStorage.setItem("profile_avatar", "people");
-}
-
-export const avatar = ref<Icon>(
-  (localStorage.getItem("profile_avatar") as Icon) || "people"
-);
-
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  target: number;
-  unlocked: boolean;
-}
-
-export const achievements = ref<Achievement[]>([
-  {
-    id: "earn_10",
-    title: "Первые деньги",
-    description: "Заработать 10$",
-    target: 10,
-    unlocked: JSON.parse(
-      localStorage.getItem("achievement_earn_10") || "false"
-    ),
-  },
-  {
-    id: "earn_100",
-    title: "Состоятельный",
-    description: "Заработать 100$",
-    target: 100,
-    unlocked: JSON.parse(
-      localStorage.getItem("achievement_earn_100") || "false"
-    ),
-  },
-  {
-    id: "earn_1000",
-    title: "Миллионер",
-    description: "Заработать 1,000$",
-    target: 1000,
-    unlocked: JSON.parse(
-      localStorage.getItem("achievement_earn_1000") || "false"
-    ),
-  },
-]);
-
-export function checkAchievements() {
-  achievements.value.forEach((achievement) => {
-    if (!achievement.unlocked && money.value >= achievement.target) {
-      achievement.unlocked = true;
-      localStorage.setItem(`achievement_${achievement.id}`, "true");
-    }
-  });
-}
+import { io, Socket } from "socket.io-client";
+import { checkAuth, isAuthenticated } from "./authState";
+import { money, energy, currentSkin, achievements, avatar } from "./store";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -85,9 +28,78 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, _from, next) => {
-  const token = localStorage.getItem("token");
-  const isAuthed = Boolean(token);
+let socket: Socket | null = null;
+
+router.beforeEach(async (to, _from, next) => {
+  await checkAuth();
+  const isAuthed = isAuthenticated.value;
+
+  if (isAuthed) {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      // Initialize socket if not already connected
+      if (!socket) {
+        const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+        socket = io(API_BASE, {
+          query: { userId },
+          withCredentials: true,
+        });
+
+        socket.on("playerUpdated", (player: any) => {
+          if (player.money !== undefined) money.value = player.money;
+          if (player.energy !== undefined) energy.value = player.energy;
+          if (player.selectedSkin) {
+            currentSkin.value = player.selectedSkin as Icon;
+            localStorage.setItem("character_skin", player.selectedSkin);
+          }
+          if (player.unlockedAchievements) {
+            const unlockedIds = player.unlockedAchievements as string[];
+            achievements.value.forEach((ach) => {
+              if (unlockedIds.includes(ach.id)) {
+                ach.unlocked = true;
+                localStorage.setItem(`achievement_${ach.id}`, "true");
+              }
+            });
+          }
+        });
+      }
+
+      // Fetch user data to get avatar and achievements
+      try {
+        const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+        const res = await fetch(`${API_BASE}/players/${userId}`);
+        if (res.ok) {
+          const player = await res.json();
+          // Load character skin
+          if (player.selectedSkin) {
+            currentSkin.value = player.selectedSkin as Icon;
+            localStorage.setItem("character_skin", player.selectedSkin);
+          }
+          // Load profile avatar
+          if (player.user?.avatar) {
+            avatar.value = player.user.avatar as Icon;
+            localStorage.setItem("profile_avatar", player.user.avatar);
+          }
+
+          if (player.unlockedAchievements) {
+            const unlockedIds = player.unlockedAchievements as string[];
+            achievements.value.forEach((ach) => {
+              if (unlockedIds.includes(ach.id)) {
+                ach.unlocked = true;
+                localStorage.setItem(`achievement_${ach.id}`, "true");
+              }
+            });
+          }
+        }
+      } catch { }
+    }
+  } else {
+    if (socket) {
+      socket.disconnect();
+      socket = null;
+    }
+  }
+
   const publicPaths = new Set(["/login", "/register", "/welcome"]);
   if (isAuthed && publicPaths.has(to.path)) {
     return next("/main");

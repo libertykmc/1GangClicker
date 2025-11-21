@@ -1,16 +1,5 @@
 <script setup lang="ts">
-export type Icon =
-  | "home"
-  | "money"
-  | "star"
-  | "shirt"
-  | "micro"
-  | "disk"
-  | "people"
-  | "sign"
-  | "vika"
-  | "ishak"
-  | "miron";
+import type { Icon } from "../types";
 
 defineProps<{
   icon: Icon;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
-import { avatar } from "../main";
+import { currentSkin } from "../store";
 import { ref } from "vue";
 import type { Icon } from "../components/Icon.vue";
 
@@ -10,12 +10,25 @@ const availableSkins = [
   { id: "miron", name: "Miron", icon: "miron" },
 ];
 
-const selectedSkin = ref<Icon>(avatar.value);
+const selectedSkin = ref<Icon>(currentSkin.value);
 
-const selectSkin = (skinId: string) => {
+const selectSkin = async (skinId: string) => {
   selectedSkin.value = skinId as Icon;
-  avatar.value = skinId as Icon;
-  localStorage.setItem("profile_avatar", skinId);
+  currentSkin.value = skinId as Icon;
+  localStorage.setItem("character_skin", skinId);
+
+  const userId = localStorage.getItem("userId");
+  if (userId) {
+    try {
+      const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+      await fetch(`${API_BASE}/players/skin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, skinId }),
+        credentials: "include",
+      });
+    } catch {}
+  }
 };
 </script>
 

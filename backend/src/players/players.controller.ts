@@ -6,7 +6,7 @@ import { UpdatePlayerDto } from './dto/update-player.dto';
 @ApiTags('Players')
 @Controller('players')
 export class PlayersController {
-  constructor(private readonly playersService: PlayersService) {}
+  constructor(private readonly playersService: PlayersService) { }
 
   @Post('create/:userId')
   create(@Param('userId') userId: string) {
@@ -27,5 +27,17 @@ export class PlayersController {
       body.deltaMoney,
       body.deltaEnergy,
     );
+  }
+
+  @Post('achievement')
+  @ApiOperation({ summary: 'Разблокировать достижение' })
+  unlockAchievement(@Body() body: { userId: string; achievementId: string }) {
+    return this.playersService.unlockAchievement(body.userId, body.achievementId);
+  }
+
+  @Post('skin')
+  @ApiOperation({ summary: 'Обновить скин персонажа' })
+  updateSkin(@Body() body: { userId: string; skinId: string }) {
+    return this.playersService.updateSkin(body.userId, body.skinId);
   }
 }

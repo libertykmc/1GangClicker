@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Stat from "./Stat.vue";
 import { onMounted, onUnmounted, watch } from "vue";
-import { money, energy, isDead } from "../main.ts";
+import { money, energy, isDead } from "../store";
 
 let energyTimer: number | null = null;
 

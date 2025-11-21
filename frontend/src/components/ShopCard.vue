@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Icon, { Icon as IIcon } from "./Icon.vue";
-import { money, avatar } from "../main.ts";
+import { money, avatar } from "../store";
 import { ref, watch } from "vue";
 
 const props = defineProps<{
