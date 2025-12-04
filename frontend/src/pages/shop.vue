@@ -9,12 +9,14 @@ import Footer from "../components/Footer.vue";
     <div class="app">
       <div class="shop">
         <Header />
-        <h1 class="shop__title">Магазин</h1>
+        <h1 class="shop__title">Усилители</h1>
         <div class="shop__items">
-          <Card icon="micro" name="Микрофон" price="100" />
-          <Card icon="micro" name="Микрофон" price="100" />
-          <Card icon="micro" name="Микрофон" price="100" />
-          <Card icon="miron" name="miron" price="10" />
+          <Card icon="shirt" name="Денежная футболка" price="100" />
+          <Card icon="disk" name="Энергетический диск" price="200" />
+          <h1 class="shop__title" style="text-align: center">Скины</h1>
+          <Card icon="miron" name="Стартовый Мирон" price="10" />
+          <Card icon="asya" name="Красавица Ася" price="500" />
+          <Card icon="german" name="Легендарный Герман" price="1000" />
         </div>
       </div>
       <div class="footerholder">

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import Icon, { Icon as IIcon } from "./Icon.vue";
-import { money, avatar } from "../store";
-import { ref, watch } from "vue";
+import Icon from "./Icon.vue";
+import type { Icon as IIcon } from "../types";
+import { money } from "../store";
+import { ref, watch, onMounted } from "vue";
 
 const props = defineProps<{
   icon: IIcon;
@@ -9,44 +10,130 @@ const props = defineProps<{
   price: string;
 }>();
 
+const API_BASE =
+  (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+
 const localPrice = ref(Number(props.price));
 const haveMoney = ref(false);
 const isPurchased = ref(false);
 
-if (props.name === "miron") {
-  isPurchased.value = localStorage.getItem("miron_purchased") === "true";
-}
+// Определяем, является ли товар скином
+const isSkin = ["miron", "asya", "german"].includes(props.icon);
+const itemId = props.icon; // Используем icon как itemId
 
-if (money.value >= localPrice.value && !isPurchased.value) {
-  haveMoney.value = true;
-}
+// Маппинг названий товаров на itemId
+const itemIdMap: Record<string, string> = {
+  "Денежная футболка": "shirt",
+  "Энергетический диск": "disk",
+  "Стартовый Мирон": "miron",
+  "Красавица Ася": "asya",
+  "Легендарный Герман": "german",
+};
 
-const buyObject = () => {
-  if (haveMoney.value) {
-    money.value -= localPrice.value;
-    localStorage.setItem("money", money.value.toString());
+const getItemId = () => {
+  return itemIdMap[props.name] || itemId;
+};
 
-    if (props.name === "miron") {
-      localStorage.setItem("profile_avatar", "miron");
-      localStorage.setItem("miron_purchased", "true");
-      avatar.value = "miron";
-      isPurchased.value = true;
-      haveMoney.value = false;
+onMounted(async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/players/${userId}`);
+    if (res.ok) {
+      const player = await res.json();
+      const currentItemId = getItemId();
+
+      if (isSkin) {
+        // Проверяем ownedSkins
+        if (player.ownedSkins && player.ownedSkins.includes(currentItemId)) {
+          isPurchased.value = true;
+        }
+      } else {
+        // Проверяем purchasedItems
+        if (
+          player.purchasedItems &&
+          player.purchasedItems.includes(currentItemId)
+        ) {
+          isPurchased.value = true;
+        }
+      }
     }
+  } catch {}
+
+  updateHaveMoney();
+});
+
+const updateHaveMoney = () => {
+  if (money.value >= localPrice.value && !isPurchased.value) {
+    haveMoney.value = true;
+  } else {
+    haveMoney.value = false;
   }
 };
 
-watch(money, (newCount) => {
-  if (newCount < localPrice.value) {
-    haveMoney.value = false;
+const buyObject = async () => {
+  if (!haveMoney.value || isPurchased.value) return;
+
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+
+  const currentItemId = getItemId();
+
+  try {
+    if (isSkin) {
+      // Покупка скина
+      const res = await fetch(`${API_BASE}/players/purchase/skin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          skinId: currentItemId,
+          price: localPrice.value,
+        }),
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const player = await res.json();
+        money.value = player.money;
+        isPurchased.value = true;
+        haveMoney.value = false;
+      }
+    } else {
+      // Покупка товара
+      const res = await fetch(`${API_BASE}/players/purchase/item`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          itemId: currentItemId,
+          price: localPrice.value,
+        }),
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const player = await res.json();
+        money.value = player.money;
+        isPurchased.value = true;
+        haveMoney.value = false;
+      }
+    }
+  } catch (error) {
+    console.error("Purchase error:", error);
   }
-  localStorage.setItem("money", newCount.toString());
+};
+
+watch(money, () => {
+  updateHaveMoney();
 });
 
 watch(
   () => props.price,
   (newCount) => {
     localPrice.value = Number(newCount);
+    updateHaveMoney();
   }
 );
 </script>
@@ -81,9 +168,21 @@ watch(
 }
 
 .card__image {
-  width: 30px;
-  padding: 10px;
+  width: 50px;
+  height: 50px;
+  padding: 5px;
   border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.card__image :deep(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .card__text {

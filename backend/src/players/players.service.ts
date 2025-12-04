@@ -17,7 +17,7 @@ export class PlayersService {
     @InjectRepository(User)
     private userRepo: Repository<User>,
     private eventsGateway: EventsGateway,
-  ) { }
+  ) {}
 
   async createForUser(userId: string) {
     console.log('🔍 Поиск пользователя с id:', userId);
@@ -58,7 +58,10 @@ export class PlayersService {
     if (ticks <= 0) return false;
 
     const restoredEnergy = ticks * this.ENERGY_REGEN_AMOUNT;
-    const nextEnergy = Math.min(this.MAX_ENERGY, player.energy + restoredEnergy);
+    const nextEnergy = Math.min(
+      this.MAX_ENERGY,
+      player.energy + restoredEnergy,
+    );
     if (nextEnergy === player.energy) return false;
 
     player.energy = nextEnergy;
@@ -121,6 +124,61 @@ export class PlayersService {
   async updateSkin(userId: string, skinId: string) {
     const player = await this.getPlayer(userId);
     player.selectedSkin = skinId;
+    const saved = await this.playerRepo.save(player);
+    this.eventsGateway.notifyUserUpdate(userId, saved);
+    return saved;
+  }
+
+  async purchaseItem(userId: string, itemId: string, price: number) {
+    const player = await this.getPlayer(userId);
+
+    if (player.money < price) {
+      throw new NotFoundException('Not enough money');
+    }
+
+    if (!player.purchasedItems) {
+      player.purchasedItems = [];
+    }
+
+    if (player.purchasedItems.includes(itemId)) {
+      return player; // Already purchased
+    }
+
+    player.money -= price;
+    player.purchasedItems.push(itemId);
+
+    // Apply item effects
+    if (itemId === 'shirt') {
+      // Денежная футболка: +10 к деньгам за клик
+      player.clickPower += 10;
+    } else if (itemId === 'disk') {
+      // Энергетический диск: уменьшить расход энергии с 10 до 2
+      player.energyPerClick = 2;
+    }
+
+    const saved = await this.playerRepo.save(player);
+    this.eventsGateway.notifyUserUpdate(userId, saved);
+    return saved;
+  }
+
+  async purchaseSkin(userId: string, skinId: string, price: number) {
+    const player = await this.getPlayer(userId);
+
+    if (player.money < price) {
+      throw new NotFoundException('Not enough money');
+    }
+
+    if (!player.ownedSkins) {
+      player.ownedSkins = [];
+    }
+
+    if (player.ownedSkins.includes(skinId)) {
+      return player; // Already purchased
+    }
+
+    player.money -= price;
+    player.ownedSkins.push(skinId);
+
     const saved = await this.playerRepo.save(player);
     this.eventsGateway.notifyUserUpdate(userId, saved);
     return saved;

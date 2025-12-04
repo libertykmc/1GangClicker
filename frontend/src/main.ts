@@ -39,7 +39,8 @@ router.beforeEach(async (to, _from, next) => {
     if (userId) {
       // Initialize socket if not already connected
       if (!socket) {
-        const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+        const API_BASE =
+          (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
         socket = io(API_BASE, {
           query: { userId },
           withCredentials: true,
@@ -52,12 +53,16 @@ router.beforeEach(async (to, _from, next) => {
             currentSkin.value = player.selectedSkin as Icon;
             localStorage.setItem("character_skin", player.selectedSkin);
           }
+          // Сбрасываем все достижения перед загрузкой
+          achievements.value.forEach((ach) => {
+            ach.unlocked = false;
+          });
+          // Загружаем достижения только с бэкенда для текущего пользователя
           if (player.unlockedAchievements) {
             const unlockedIds = player.unlockedAchievements as string[];
             achievements.value.forEach((ach) => {
               if (unlockedIds.includes(ach.id)) {
                 ach.unlocked = true;
-                localStorage.setItem(`achievement_${ach.id}`, "true");
               }
             });
           }
@@ -66,7 +71,8 @@ router.beforeEach(async (to, _from, next) => {
 
       // Fetch user data to get avatar and achievements
       try {
-        const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+        const API_BASE =
+          (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
         const res = await fetch(`${API_BASE}/players/${userId}`);
         if (res.ok) {
           const player = await res.json();
@@ -81,17 +87,21 @@ router.beforeEach(async (to, _from, next) => {
             localStorage.setItem("profile_avatar", player.user.avatar);
           }
 
+          // Сбрасываем все достижения перед загрузкой
+          achievements.value.forEach((ach) => {
+            ach.unlocked = false;
+          });
+          // Загружаем достижения только с бэкенда для текущего пользователя
           if (player.unlockedAchievements) {
             const unlockedIds = player.unlockedAchievements as string[];
             achievements.value.forEach((ach) => {
               if (unlockedIds.includes(ach.id)) {
                 ach.unlocked = true;
-                localStorage.setItem(`achievement_${ach.id}`, "true");
               }
             });
           }
         }
-      } catch { }
+      } catch {}
     }
   } else {
     if (socket) {

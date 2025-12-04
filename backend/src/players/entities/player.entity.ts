@@ -32,7 +32,7 @@ export class Player {
   @Column({ default: 1 })
   clickPower: number;
 
-  @Column({ default: 10 })
+  @Column({ default: 5 })
   energyPerClick: number;
 
   @Column('simple-array', { default: '' })
@@ -40,6 +40,12 @@ export class Player {
 
   @Column({ default: 'people' })
   selectedSkin: string;
+
+  @Column('simple-array', { default: '' })
+  purchasedItems: string[];
+
+  @Column('simple-array', { default: '' })
+  ownedSkins: string[];
 
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;

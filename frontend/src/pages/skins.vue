@@ -2,15 +2,64 @@
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { currentSkin } from "../store";
-import { ref } from "vue";
-import type { Icon } from "../components/Icon.vue";
+import { ref, onMounted } from "vue";
+import type { Icon } from "../types";
 
-const availableSkins = [
+const API_BASE =
+  (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
+
+const availableSkins = ref<Array<{ id: string; name: string; icon: string }>>([
   { id: "people", name: "People", icon: "people" },
-  { id: "miron", name: "Miron", icon: "miron" },
-];
+]);
 
 const selectedSkin = ref<Icon>(currentSkin.value);
+
+const skinNames: Record<string, string> = {
+  people: "People",
+  miron: "Miron",
+  asya: "Asya",
+  german: "German",
+};
+
+const getSkinImagePath = (icon: string) => {
+  // Маппинг для правильных путей к изображениям
+  const imageMap: Record<string, string> = {
+    people: "/people.png",
+    miron: "/miron.png",
+    asya: "/Asya.png",
+    german: "/german.png",
+  };
+  return imageMap[icon] || `/${icon}.png`;
+};
+
+onMounted(async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/players/${userId}`);
+    if (res.ok) {
+      const player = await res.json();
+      const ownedSkins = player.ownedSkins || [];
+
+      // Всегда показываем базовый скин people
+      const skins = [{ id: "people", name: "People", icon: "people" }];
+
+      // Добавляем купленные скины
+      ownedSkins.forEach((skinId: string) => {
+        if (skinId !== "people" && skinNames[skinId]) {
+          skins.push({
+            id: skinId,
+            name: skinNames[skinId],
+            icon: skinId,
+          });
+        }
+      });
+
+      availableSkins.value = skins;
+    }
+  } catch {}
+});
 
 const selectSkin = async (skinId: string) => {
   selectedSkin.value = skinId as Icon;
@@ -20,7 +69,6 @@ const selectSkin = async (skinId: string) => {
   const userId = localStorage.getItem("userId");
   if (userId) {
     try {
-      const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:3000";
       await fetch(`${API_BASE}/players/skin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +97,7 @@ const selectSkin = async (skinId: string) => {
           >
             <div class="skin-card__preview">
               <img
-                :src="`/${skin.icon}.png`"
+                :src="getSkinImagePath(skin.icon)"
                 :alt="skin.name"
                 class="skin-card__image"
               />

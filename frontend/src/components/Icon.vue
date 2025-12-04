@@ -17,6 +17,8 @@ const iconPaths: Record<Icon, string> = {
   vika: "./Vika.jpg",
   ishak: "./ishak.jpg",
   miron: "./miron.png",
+  asya: "./Asya.png",
+  german: "./german.png",
 };
 </script>
 
@@ -28,5 +30,11 @@ const iconPaths: Record<Icon, string> = {
 * {
   padding: 0;
   margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>
