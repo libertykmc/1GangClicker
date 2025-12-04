@@ -4,6 +4,7 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
 
@@ -25,7 +26,7 @@ export class Player {
   @Column({ default: 0 })
   money: number;
 
-  @Column({ default: 100 })
+  @Column({ default: 1000 })
   energy: number;
 
   @Column({ default: 1 })
@@ -39,4 +40,7 @@ export class Player {
 
   @Column({ default: 'people' })
   selectedSkin: string;
+
+  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 }

@@ -26,7 +26,7 @@ const formatNumber = (num: number): string => {
 };
 
 onMounted(() => {
-  energyTimer = setInterval(restoreEnergy, 1000);
+  energyTimer = setInterval(restoreEnergy, 2000);
 });
 
 onUnmounted(() => {

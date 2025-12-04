@@ -21,6 +21,7 @@ onMounted(async () => {
     if (res.ok) {
       const player = await res.json();
       if (typeof player.money === "number") money.value = player.money;
+      if (typeof player.energy === "number") energy.value = player.energy;
     }
   } catch {}
 });
@@ -45,6 +46,9 @@ const increment = async () => {
       const player = await res.json();
       money.value =
         typeof player.money === "number" ? player.money : money.value + 1;
+      if (typeof player.energy === "number") {
+        energy.value = player.energy;
+      }
     } else {
       money.value++;
     }
